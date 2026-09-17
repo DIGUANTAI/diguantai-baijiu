@@ -1,0 +1,938 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>帝观台 · 酱香白酒内容情报中心</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23b3261e'/%3E%3Ctext x='32' y='44' font-size='30' text-anchor='middle' fill='white' font-family='PingFang SC,sans-serif'%3E%E5%B8%9D%3C/text%3E%3C/svg%3E">
+<script src="assets/echarts.min.js"></script>
+<script>window.echarts||document.write('<script src="https://cdn.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js"><\/script>')</script>
+<style>
+:root{
+  --bg:#ffffff; --ink:#1d1d1f; --ink2:#6e6e73; --line:#e8e8ed; --line2:#d2d2d7;
+  --accent:#b3261e; --accent-soft:#fbf2f1; --gray:#f5f5f7;
+  --shadow:0 2px 14px rgba(0,0,0,.05),0 1px 3px rgba(0,0,0,.04);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","SF Pro SC","PingFang SC","Helvetica Neue","Microsoft YaHei",sans-serif;font-size:17px;line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+::selection{background:rgba(179,38,30,.12);color:var(--ink)}
+a{color:inherit;text-decoration:none}
+img{display:block;max-width:100%}
+.wrap{max-width:1120px;margin:0 auto;padding:0 28px}
+.wrap-narrow{max-width:880px;margin:0 auto;padding:0 28px}
+.rv{opacity:0;transform:translateY(26px);transition:opacity .9s cubic-bezier(.22,.61,.36,1),transform .9s cubic-bezier(.22,.61,.36,1)}
+.rv.on{opacity:1;transform:none}
+
+/* 细线生长动画 */
+.line-grow{height:1px;background:linear-gradient(90deg,var(--ink),transparent);transform:scaleX(0);transform-origin:left;animation:lineGrow 1.4s cubic-bezier(.22,.61,.36,1) .2s forwards}
+@keyframes lineGrow{to{transform:scaleX(1)}}
+.accent-line{width:52px;height:3px;background:var(--accent);transform:scaleX(0);transform-origin:left;animation:lineGrow 1s cubic-bezier(.22,.61,.36,1) .35s forwards}
+
+/* 导航 */
+.nav{position:sticky;top:0;z-index:100;background:rgba(255,255,255,.82);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--line)}
+.nav-in{display:flex;align-items:center;justify-content:space-between;height:52px}
+.brand{font-size:15px;font-weight:600;letter-spacing:.02em;display:flex;align-items:center;gap:10px}
+.brand-dot{width:8px;height:8px;border-radius:50%;background:var(--accent)}
+.brand small{color:var(--ink2);font-weight:400;margin-left:2px}
+.nav-links{display:flex;gap:2px;align-items:center}
+.nav-links a{font-size:13px;color:var(--ink2);padding:7px 12px;border-radius:980px;transition:.2s}
+.nav-links a:hover,.nav-links a.on{color:var(--ink);background:var(--gray)}
+.nav-date{font-size:12.5px;color:var(--ink2);border:1px solid var(--line2);padding:4px 12px;border-radius:980px;white-space:nowrap}
+.nav-toggle{display:none;background:none;border:none;font-size:20px;color:var(--ink);cursor:pointer;padding:6px 10px}
+@media(max-width:820px){
+  .nav-links{display:none;position:absolute;top:52px;left:0;right:0;background:#fff;flex-direction:column;align-items:flex-start;padding:14px 24px;border-bottom:1px solid var(--line)}
+  .nav-links.open{display:flex}
+  .nav-toggle{display:block}
+  .nav-date{display:none}
+}
+
+/* Hero */
+.hero{position:relative;text-align:center;padding:110px 20px 0}
+.hero .kicker{font-size:13px;letter-spacing:.22em;color:var(--ink2);margin-bottom:26px}
+.hero h1{font-size:clamp(44px,7.2vw,84px);font-weight:700;letter-spacing:-.018em;line-height:1.06;color:var(--ink)}
+.hero h1 .r{color:var(--accent)}
+.hero .sub{max-width:560px;margin:26px auto 0;font-size:clamp(17px,2.2vw,21px);color:var(--ink2);line-height:1.65}
+.hero .sub b{color:var(--ink);font-weight:600}
+.hero-links{display:flex;justify-content:center;gap:32px;margin-top:30px;font-size:16px}
+.hero-links a{color:var(--accent);border-bottom:1px solid transparent;transition:.2s}
+.hero-links a:hover{border-bottom-color:var(--accent)}
+.hero-stats{display:flex;justify-content:center;gap:0;margin:52px auto 0;max-width:820px;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.hstat{flex:1;padding:26px 10px;text-align:center;border-left:1px solid var(--line)}
+.hstat:first-child{border-left:none}
+.hstat b{display:block;font-size:clamp(28px,4vw,44px);font-weight:700;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.hstat b i{font-style:normal;color:var(--ink2);font-size:.6em;font-weight:400;margin-right:2px}
+.hstat span{display:block;font-size:12.5px;color:var(--ink2);margin-top:6px;letter-spacing:.04em}
+.hero-img{margin:64px auto 0;max-width:900px;padding:0 16px}
+.hero-img img{border-radius:24px;box-shadow:0 30px 60px rgba(0,0,0,.12);width:100%;object-fit:cover;aspect-ratio:4/3}
+.hero-note{text-align:center;font-size:12.5px;color:var(--ink2);margin:20px 0 0;padding-bottom:90px}
+
+/* 区块通用 */
+section{padding:96px 0}
+.section-head{max-width:1120px;margin:0 auto;padding:0 28px 0}
+.sec-eyebrow{font-size:13px;color:var(--accent);font-weight:600;letter-spacing:.06em;margin-bottom:12px}
+h2.sec-title{font-size:clamp(30px,4.6vw,52px);font-weight:700;letter-spacing:-.015em;line-height:1.15}
+.sec-sub{max-width:640px;margin-top:18px;font-size:16.5px;color:var(--ink2);line-height:1.7}
+@media(max-width:700px){section{padding:72px 0}}
+
+/* KPI 极简行 */
+.kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:18px;overflow:hidden;margin-top:44px}
+.kpi{background:#fff;padding:28px 24px;text-align:left}
+.kpi b{display:block;font-size:34px;font-weight:700;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.kpi b small{font-size:16px;color:var(--ink2);font-weight:400;margin-left:2px}
+.kpi span{display:block;font-size:13px;color:var(--ink2);margin-top:6px}
+@media(max-width:760px){.kpi-row{grid-template-columns:repeat(2,1fr)}.kpi{padding:20px 16px}}
+
+/* 图表区 */
+.charts{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:40px}
+.chart-card{background:#fff;border:1px solid var(--line);border-radius:18px;padding:26px 22px 14px}
+.chart-card h4{font-size:15px;font-weight:600;letter-spacing:-.01em}
+.chart-card .c-sub{font-size:12.5px;color:var(--ink2);margin:5px 0 10px}
+.chart-box{height:270px}
+@media(max-width:820px){.charts{grid-template-columns:1fr}}
+
+/* 筛选 */
+.filter-bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:36px}
+.fbtn{background:#fff;border:1px solid var(--line2);color:var(--ink2);padding:7px 16px;border-radius:980px;font-size:13.5px;cursor:pointer;transition:.18s}
+.fbtn:hover{color:var(--ink);border-color:var(--ink2)}
+.fbtn.on{background:var(--ink);border-color:var(--ink);color:#fff}
+.f-search{margin-left:auto;background:var(--gray);border:1px solid transparent;border-radius:980px;padding:8px 16px;font-size:13.5px;outline:none;width:210px;color:var(--ink);transition:.2s}
+.f-search:focus{border-color:var(--line2);background:#fff}
+.f-search::placeholder{color:var(--ink2)}
+@media(max-width:700px){.f-search{margin-left:0;width:100%}}
+
+/* 榜单列表 */
+.vlist{margin-top:26px;border-top:1px solid var(--line2)}
+.vrow{display:grid;grid-template-columns:44px 1fr auto;gap:18px;align-items:center;padding:22px 8px;border-bottom:1px solid var(--line);transition:background .2s;position:relative}
+.vrow:hover{background:var(--gray)}
+.vrow .no{font-size:15px;color:var(--ink2);font-variant-numeric:tabular-nums;font-weight:600}
+.vrow .vmain{min-width:0}
+.vrow .vtop{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.vrow .vtitle{font-size:17px;font-weight:600;letter-spacing:-.01em;margin-top:5px;line-height:1.45}
+.vrow .vtitle a{color:inherit}
+.vrow .vmeta{display:flex;align-items:center;gap:14px;margin-top:7px;font-size:12.5px;color:var(--ink2);flex-wrap:wrap}
+.vrow .vright{text-align:right;white-space:nowrap}
+.vrow .vlike{font-size:19px;font-weight:700;font-variant-numeric:tabular-nums}
+.vrow .vlike small{font-size:11.5px;color:var(--ink2);font-weight:400;margin-left:3px}
+.vrow .vact{font-size:12.5px;color:var(--accent);font-weight:600;margin-top:3px;display:inline-block}
+.vrow .vnote{font-size:12px;color:var(--ink2);margin-top:5px}
+.tag{display:inline-block;font-size:11.5px;padding:2px 10px;border-radius:980px;border:1px solid var(--line2);color:var(--ink2);margin-right:6px;margin-top:6px;background:#fff}
+.tag.strong{border-color:transparent;background:var(--accent-soft);color:var(--accent);font-weight:500}
+.tag.sph{background:#f2f7f4;color:#2e6b45;border-color:transparent}
+.pill{display:inline-block;font-size:11.5px;padding:2px 10px;border-radius:980px;font-weight:500}
+.pill-dy{background:var(--gray);color:var(--ink)}
+.pill-sph{background:#eef6f1;color:#2e6b45}
+.pill-score-hi{background:var(--accent-soft);color:var(--accent)}
+.pill-score-mid{background:#f5f0e6;color:#8a6d2f}
+.pill-score-lo{background:var(--gray);color:var(--ink2)}
+@media(max-width:760px){
+  .vrow{grid-template-columns:30px 1fr;gap:10px;padding:18px 4px}
+  .vrow .vright{grid-column:2;text-align:left;display:flex;align-items:baseline;gap:14px}
+  .vrow .vlike{font-size:16px}
+}
+
+/* 深度拆解 */
+.deep-list{margin-top:40px}
+.deep-item{border:1px solid var(--line);border-radius:20px;padding:34px 36px;margin-bottom:18px;background:#fff;transition:box-shadow .25s}
+.deep-item:hover{box-shadow:var(--shadow)}
+.deep-item .d-head{display:flex;justify-content:space-between;align-items:flex-start;gap:20px;flex-wrap:wrap}
+.deep-item .d-no{font-size:13px;color:var(--ink2);letter-spacing:.08em;font-weight:600;margin-bottom:8px}
+.deep-item h3{font-size:clamp(20px,2.6vw,27px);font-weight:700;letter-spacing:-.015em;line-height:1.3}
+.deep-item .d-src{font-size:13px;color:var(--ink2);margin-top:8px}
+.deep-item .d-src a{color:var(--accent)}
+.d-data{display:flex;gap:0;margin:22px 0;border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.d-data div{flex:1;text-align:center;padding:14px 6px;border-left:1px solid var(--line)}
+.d-data div:first-child{border-left:none}
+.d-data b{display:block;font-size:19px;font-weight:700;font-variant-numeric:tabular-nums}
+.d-data span{font-size:11.5px;color:var(--ink2)}
+.dim-grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--line);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.dim-item{background:#fff;padding:16px 18px}
+.dim-item h5{font-size:12px;color:var(--accent);font-weight:600;letter-spacing:.1em;margin-bottom:6px}
+.dim-item p{font-size:14px;color:#3a3a3c;line-height:1.75}
+@media(max-width:760px){.dim-grid{grid-template-columns:1fr}.deep-item{padding:24px 20px}}
+.d-score{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-top:20px}
+.d-score .s{font-size:13px;color:var(--ink2)}
+.d-score .s b{font-size:26px;color:var(--ink);font-weight:700;margin:0 4px}
+.d-decision{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-top:20px}
+.d-decision .db{border:1px solid var(--line);border-radius:14px;padding:14px 16px;background:var(--gray)}
+.d-decision .db h6{font-size:11px;color:var(--ink2);font-weight:600;letter-spacing:.08em;margin-bottom:5px}
+.d-decision .db p{font-size:13.5px;color:#3a3a3c;line-height:1.7}
+
+/* 二创 */
+.erc-item{border-top:1px solid var(--line2);padding:40px 0}
+.erc-item:last-child{border-bottom:1px solid var(--line2)}
+.erc-head{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap}
+.erc-head h3{font-size:22px;font-weight:700;letter-spacing:-.015em}
+.erc-src{font-size:12.5px;color:var(--ink2);margin-top:6px}
+.erc-src a{color:var(--accent)}
+.script-block{background:var(--gray);border:1px solid var(--line);border-radius:16px;padding:22px 24px;margin-top:18px;font-size:14.5px;line-height:1.9;color:#3a3a3c;white-space:pre-wrap;cursor:pointer;transition:.2s}
+.script-block:hover{border-color:var(--line2);background:#f0f0f2}
+.script-block .t{display:inline-block;background:var(--ink);color:#fff;font-size:11px;padding:1px 9px;border-radius:980px;margin-right:10px;letter-spacing:.06em;font-weight:500}
+.copy-btn{background:var(--ink);color:#fff;border:none;padding:9px 22px;border-radius:980px;font-size:13.5px;cursor:pointer;transition:.2s;font-weight:500}
+.copy-btn:hover{opacity:.85}
+.rule-list{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
+.rule-list li{list-style:none;font-size:12.5px;color:var(--ink2);padding:7px 14px;border:1px solid var(--line);border-radius:980px;background:#fff}
+.rule-list li b{color:var(--accent);font-weight:600}
+
+/* 话题 */
+.topic-wrap{display:grid;grid-template-columns:1.1fr .9fr;gap:40px;margin-top:36px}
+@media(max-width:820px){.topic-wrap{grid-template-columns:1fr;gap:24px}}
+.topic-block h4{font-size:15px;font-weight:600;margin-bottom:16px}
+.topic-cloud{display:flex;flex-wrap:wrap;gap:8px}
+.t-tag{font-size:14px;padding:7px 16px;border-radius:980px;background:var(--gray);border:1px solid var(--line);color:var(--ink);cursor:pointer;transition:.15s}
+.t-tag:hover{border-color:var(--ink2)}
+.t-tag .n{font-size:11px;color:var(--ink2);margin-left:5px;font-variant-numeric:tabular-nums}
+.insight-list{display:flex;flex-direction:column;gap:12px}
+.insight{font-size:14.5px;color:#3a3a3c;line-height:1.75;padding:16px 18px;border:1px solid var(--line);border-radius:14px;background:var(--gray)}
+.insight b{color:var(--ink)}
+.insight b::before{content:"";display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--accent);margin-right:10px;vertical-align:2px}
+
+/* 选题 */
+.sel-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:36px}
+@media(max-width:820px){.sel-grid{grid-template-columns:1fr}}
+.sel-card{border:1px solid var(--line);border-radius:18px;padding:24px;background:#fff;transition:.2s;display:flex;flex-direction:column;gap:9px}
+.sel-card:hover{box-shadow:var(--shadow);border-color:var(--line2)}
+.sel-no{font-size:12px;color:var(--accent);font-weight:700;letter-spacing:.1em}
+.sel-title{font-size:17.5px;font-weight:700;letter-spacing:-.01em;line-height:1.45}
+.sel-row{font-size:13px;color:var(--ink2);line-height:1.6}
+.sel-row b{color:var(--ink);font-weight:600}
+.sel-tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
+
+/* 建议 */
+.adv-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:36px}
+@media(max-width:820px){.adv-grid{grid-template-columns:1fr}}
+.adv-box{border:1px solid var(--line);border-radius:18px;padding:26px;background:#fff}
+.adv-box h4{font-size:14px;font-weight:700;letter-spacing:.04em;margin-bottom:16px;display:flex;align-items:center;gap:9px}
+.adv-box h4::before{content:"";width:7px;height:7px;border-radius:50%}
+.adv-box.do h4::before{background:var(--accent)}
+.adv-box.dont h4::before{background:var(--ink2)}
+.adv-box.insight h4::before{background:#d29922}
+.adv-box ul{padding-left:0;list-style:none;display:flex;flex-direction:column;gap:12px}
+.adv-box li{font-size:14px;color:#3a3a3c;line-height:1.7;padding-left:16px;position:relative}
+.adv-box li::before{content:"—";position:absolute;left:0;color:var(--ink2)}
+
+/* 溯源 */
+.src-table{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:36px}
+.src-table th{text-align:left;padding:12px 14px;color:var(--ink2);font-weight:600;font-size:12px;letter-spacing:.06em;border-bottom:1px solid var(--line2);white-space:nowrap}
+.src-table td{padding:12px 14px;border-bottom:1px solid var(--line);color:#3a3a3c;vertical-align:top}
+.src-table tr:hover td{background:var(--gray)}
+.src-table .url{color:var(--accent);font-size:12px;word-break:break-all}
+.src-wrap{overflow-x:auto}
+.note-box{border:1px solid var(--line);border-radius:16px;padding:22px 24px;font-size:13.5px;color:var(--ink2);line-height:1.9;margin-top:26px;background:var(--gray)}
+.note-box b{color:var(--ink);font-weight:600}
+
+footer{border-top:1px solid var(--line);padding:44px 0 60px;margin-top:40px}
+footer .foot{display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;font-size:12.5px;color:var(--ink2)}
+
+#toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(16px);background:rgba(29,29,31,.92);color:#fff;padding:11px 24px;border-radius:980px;font-size:13.5px;opacity:0;pointer-events:none;transition:.28s;z-index:200}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.backtop{position:fixed;right:22px;bottom:26px;width:42px;height:42px;border-radius:50%;background:var(--gray);border:1px solid var(--line2);color:var(--ink);font-size:17px;cursor:pointer;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:.25s;z-index:150}
+.backtop.show{opacity:1;pointer-events:auto}
+.backtop:hover{background:var(--ink);color:#fff}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}.rv{transition:none;opacity:1;transform:none}.line-grow,.accent-line{animation:none;transform:none}}
+</style>
+</head>
+<body>
+
+<!-- 导航 -->
+<nav class="nav">
+  <div class="wrap nav-in">
+    <div class="brand"><span class="brand-dot"></span>帝观台<small>酱酒内容情报中心</small></div>
+    <div class="nav-links" id="navLinks">
+      <a href="#today" class="on">今日战报</a>
+      <a href="#rank">爆款榜单</a>
+      <a href="#deep">深度拆解</a>
+      <a href="#remix">二创工坊</a>
+      <a href="#topics">话题库</a>
+      <a href="#selection">选题库</a>
+      <a href="#source">数据溯源</a>
+    </div>
+    <div class="nav-date" id="navDate">—</div>
+    <button class="nav-toggle" id="navToggle">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+    </button>
+  </div>
+</nav>
+
+<!-- Hero -->
+<header class="hero">
+  <div class="hero-inner">
+    <div class="kicker rv on">酱香白酒赛道 · 抖音 + 视频号 · 每日自动巡猎</div>
+    <h1 class="rv on">酱香白酒<br><span class="r">内容情报</span>中心</h1>
+    <p class="sub rv on">每天自动抓取两大平台当日流量最好的优质视频与话题，从<b>账号、数据、话题、看点、情绪、爆点、痛点</b>七个维度拆解，自动生成合规去重的二创脚本，沉淀为可直接开拍的选题弹药库。所有数据<b>可溯源</b>，不编造一个数字。</p>
+    <div class="hero-links rv on">
+      <a href="#rank">查看今日榜单 →</a>
+      <a href="#remix">领取二创脚本 →</a>
+    </div>
+    <div class="hero-stats rv on" id="heroStats"></div>
+    <div class="hero-img rv on"><img src="assets/product-hero.jpg" alt="帝观台酱酒产品图"></div>
+    <p class="hero-note">帝观台 · 数据更新于 <span id="heroDate">2026-09-17</span> · 抖音网页版实抓 · 视频号待接入</p>
+  </div>
+</header>
+
+<!-- 今日战报 -->
+<section id="today">
+  <div class="section-head rv">
+    <div class="sec-eyebrow">TODAY · 2026-09-17</div>
+    <h2 class="sec-title">今日战报</h2>
+    <p class="sec-sub" id="todaySub">近 7 天酱香白酒赛道抖音侧抓取 20 条优质视频、覆盖 18 个账号。视频号今日受平台限制待补充（详见数据溯源）。</p>
+    <div class="accent-line" style="margin-top:24px"></div>
+    <div class="kpi-row" id="kpiGrid"></div>
+  </div>
+  <div class="wrap" style="padding-top:0">
+    <div class="charts">
+      <div class="chart-card rv"><h4>爆点类型分布</h4><div class="c-sub">近 7 天入选视频的核心爆点构成</div><div class="chart-box" id="chartBoom"></div></div>
+      <div class="chart-card rv"><h4>收藏率 vs 转发率</h4><div class="c-sub">右上角是视频号最爱的「高收藏 + 高转发」双高内容</div><div class="chart-box" id="chartMatrix"></div></div>
+      <div class="chart-card rv"><h4>深度拆解互动结构</h4><div class="c-sub">8 条精选视频的收藏率 / 转发率对比</div><div class="chart-box" id="chartEngage"></div></div>
+      <div class="chart-card rv"><h4>TOP 账号声量</h4><div class="c-sub">按点赞总量排序，判断谁值得长期对标</div><div class="chart-box" id="chartAcct"></div></div>
+    </div>
+  </div>
+</section>
+<!-- 爆款榜单 -->
+<section id="rank" style="border-top:1px solid var(--line)">
+  <div class="section-head rv">
+    <div class="sec-eyebrow">TOP 20 · SNAPSHOT</div>
+    <h2 class="sec-title">今日爆款榜单</h2>
+    <p class="sec-sub">近 7 天抖音侧酱香白酒赛道流量最优视频 TOP 20（按点赞排序）。每条标注平台、账号、互动数据、爆点与建议动作，点击标题直达原视频可溯源。</p>
+  </div>
+  <div class="wrap" style="padding-top:0">
+    <div class="filter-bar">
+      <button class="fbtn on" data-fp="all">全部</button>
+      <button class="fbtn" data-fp="douyin">抖音</button>
+      <button class="fbtn" data-fp="shipinhao">视频号</button>
+      <span style="width:1px;height:20px;background:var(--line2);align-self:center"></span>
+      <button class="fbtn on" data-fb="all">全部爆点</button>
+      <button class="fbtn" data-fb="决策">决策对比</button>
+      <button class="fbtn" data-fb="存酒">存酒</button>
+      <button class="fbtn" data-fb="酒桌">酒桌文化</button>
+      <button class="fbtn" data-fb="价格">价格捡漏</button>
+      <button class="fbtn" data-fb="避坑">避坑知识</button>
+      <button class="fbtn" data-fb="品酒">品酒入门</button>
+      <input class="f-search" id="vSearch" placeholder="搜索账号 / 话题 / 标题…">
+    </div>
+    <div class="vlist" id="vGrid"></div>
+  </div>
+</section>
+
+<!-- 深度拆解 -->
+<section id="deep" style="background:var(--gray);border-top:1px solid var(--line)">
+  <div class="section-head rv">
+    <div class="sec-eyebrow">DEEP DIVE · 8-DIMENSION</div>
+    <h2 class="sec-title">深度拆解</h2>
+    <p class="sec-sub">从今日榜单精选 8 条高价值视频，按「账号画像 / 数据表现 / 话题锚点 / 看点钩子 / 情绪点 / 爆点 / 痛点 / 组合公式」八维拆解，并完成帝观台 IP 定位匹配度评分与翻拍决策。</p>
+  </div>
+  <div class="wrap" style="padding-top:0">
+    <div class="deep-list" id="deepList"></div>
+  </div>
+</section>
+
+<!-- 二创工坊 -->
+<section id="remix">
+  <div class="section-head rv">
+    <div class="sec-eyebrow">REMIX WORKSHOP</div>
+    <h2 class="sec-title">二创工坊</h2>
+    <p class="sec-sub">保持原视频文案内核，自动生成相同话题的合规去重脚本——极限词、违规词零出现。每条附「为什么二创 / 值不值得翻拍 / 能不能翻拍 / 怎么翻拍 / 注意事项 / 汲取与补充」。点击脚本区域可一键复制。</p>
+  </div>
+  <div class="wrap" style="padding-top:0">
+    <div id="ercList"></div>
+  </div>
+</section>
+
+<!-- 话题库 -->
+<section id="topics" style="background:var(--gray);border-top:1px solid var(--line)">
+  <div class="section-head rv">
+    <div class="sec-eyebrow">TOPIC BANK</div>
+    <h2 class="sec-title">话题库</h2>
+    <p class="sec-sub">从今日抓取的视频文案中提取的高频话题标签与核心洞察，分平台沉淀——先看懂大家在聊什么，再决定你拍什么。</p>
+  </div>
+  <div class="wrap" style="padding-top:0">
+    <div class="topic-wrap">
+      <div>
+        <div class="topic-block rv">
+          <h4>抖音高频话题</h4>
+          <div class="topic-cloud" id="topicDy"></div>
+        </div>
+        <div class="topic-block rv" style="margin-top:34px">
+          <h4>视频号话题</h4>
+          <div class="topic-cloud" id="topicSph"></div>
+        </div>
+      </div>
+      <div class="topic-block rv">
+        <h4>今日核心洞察</h4>
+        <div class="insight-list" id="insightList"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 选题库 -->
+<section id="selection">
+  <div class="section-head rv">
+    <div class="sec-eyebrow">WEEKLY · 15 TOPICS</div>
+    <h2 class="sec-title">本周选题库</h2>
+    <p class="sec-sub">基于本周抓取的爆款内容归纳出的 15 个内容文案与话题选题，每条含标题、目标痛点、视频结构、推荐话题标签、预计爆点类型与参考来源，已按帝观台 IP 定位与 2026 平台新规校准。</p>
+  </div>
+  <div class="wrap" style="padding-top:0">
+    <div class="sel-grid" id="selGrid"></div>
+  </div>
+</section>
+
+<!-- 操盘建议 -->
+<section id="advise" style="background:var(--gray);border-top:1px solid var(--line)">
+  <div class="section-head rv">
+    <div class="sec-eyebrow">TODAY'S PLAYBOOK</div>
+    <h2 class="sec-title">今日操盘建议</h2>
+    <p class="sec-sub">今天优先拍什么、别碰什么、评论区怎么运营、观察到什么趋势信号。</p>
+  </div>
+  <div class="wrap" style="padding-top:0">
+    <div class="adv-grid" id="advGrid"></div>
+  </div>
+</section>
+
+<!-- 数据溯源 -->
+<section id="source">
+  <div class="section-head rv">
+    <div class="sec-eyebrow">TRACEABILITY</div>
+    <h2 class="sec-title">数据溯源与更新机制</h2>
+    <p class="sec-sub">所有视频均来自真实抓取，链接可直达原视频；未获取到的指标一律标注「仅点赞可见」，不编造任何数字。</p>
+  </div>
+  <div class="wrap" style="padding-top:0">
+    <div class="src-wrap rv"><table class="src-table" id="srcTable"></table></div>
+    <div class="note-box rv" id="noteBox"></div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap foot">
+    <div>帝观台 · 酱酒内容情报中心 — 每日 11:00 自动更新 · 数据可溯源</div>
+    <div>素材库 / 话题库 / 选题库已按平台归档至项目文件夹 · 周报每周一输出 15 个选题</div>
+  </div>
+</footer>
+
+<button class="backtop" id="backTop" title="回到顶部">
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+</button>
+<div id="toast"></div>
+<script>
+
+/* ============================================================
+   帝观台 · 酱酒内容情报作战室 — 数据层
+   更新方式：每日定时任务抓取后，替换下方 DATA 内容并同步归档文件夹
+   ============================================================ */
+const D = {
+  meta: {
+    date: "2026-09-17", weekday: "周四", updatedAt: "2026-09-17 16:00",
+    sourceNote: "抖音网页版搜索（已登录账号）：关键词矩阵「酱香白酒 / 酱酒 / 茅台镇 / 白酒知识 / 酱酒知识 / 白酒品鉴 / 酱酒推荐」，按最多点赞 + 近7天筛选，逐条核验。视频号：今日受平台限制未自动抓取（无公开网页搜索入口）。"
+  },
+  videos: [
+    {id:1, plat:"douyin", acct:"酱香优品-珠珠", fans:"4.5万", url:"https://www.douyin.com/video/7625949801795911140", date:"约5月前", likes:9697, comments:812, collects:5738, shares:3819,
+     title:"酒杯一拿，事业发达", tags:["口粮酒推荐","贵州载酒","酱香型白酒","茅台镇珠珠"], form:"美女出镜 + 一句金句，18秒",
+     hook:"美女举杯 + 黄色字幕「事业发达」", emotion:"讨彩头 / 祝愿", boom:"金句", pain:"酒桌想要一句吉利话", ipScore:15, action:"差异化翻拍", note:"高收藏高转发双高，但纯金句赛道已卷，需加知识增量"},
+    {id:2, plat:"douyin", acct:"杨酒师酱香白酒", fans:"2244", url:"https://www.douyin.com/video/7671601294821346560", date:"约1月前", likes:9569, comments:333, collects:485, shares:4023,
+     title:"酒桌识人术，5秒教你一眼看穿（第24集）", tags:["酱香型白酒","杨酒师","酒量","冷知识","酒桌文化"], form:"女性真人出镜，餐桌场景，29秒",
+     hook:"黄色大字「四招看出对方酒量」", emotion:"掌控感 / 好奇", boom:"酒桌", pain:"酒桌社交怕遇到深藏不露的人", ipScore:13, action:"升级翻拍", note:"2244粉出9569赞，选题碾压粉丝量；转发率42%为社交货币型"},
+    {id:3, plat:"douyin", acct:"暖风（生活号）", fans:"—", url:"https://www.douyin.com/video/7685679341585953178", date:"21小时前", likes:18000, comments:0, collects:0, shares:0,
+     title:"每天至少要做一件让自己开心的事情（赖氏父子酱酒话题）", tags:["赖氏父子酱酒","保持热爱奔赴山海"], form:"生活向内容 + 品牌话题",
+     hook:"情绪文案开场", emotion:"治愈 / 认同", boom:"品牌", pain:"—", ipScore:6, action:"观察", note:"疑似品牌投放内容，与酱酒强相关性弱，仅作话题观察"},
+    {id:4, plat:"douyin", acct:"问哥选酒", fans:"50.7万", url:"https://www.douyin.com/video/7684939136108629298", date:"3天前", likes:17000, comments:0, collects:0, shares:0,
+     title:"破50万粉丝，送50瓶白酒，铁粉请进", tags:["白酒","酒知识","选酒指南","白酒测评"], form:"涨粉福利口播",
+     hook:"「破50万粉送50瓶」利益承诺", emotion:"占便宜 / 归属感", boom:"福利", pain:"想要实惠、想被记住", ipScore:12, action:"学习玩法", note:"涨粉节点型内容，数据极好但不可复制为常规选题，学其福利裂变玩法"},
+    {id:5, plat:"douyin", acct:"茅台镇老酒猎人", fans:"7945", url:"https://www.douyin.com/video/7559177975699164457", date:"近期（合集第10集）", likes:6478, comments:372, collects:2179, shares:4836,
+     title:"白酒价格大崩盘，第一名暴跌71%", tags:["名酒捡漏","白酒避坑","茅台镇散酒","酱酒"], form:"口播 + 价格盘点，2分05秒",
+     hook:"「价格大崩盘」数字冲击", emotion:"占便宜 + 焦虑", boom:"价格", pain:"怕买贵，想知道什么时候入手最划算", ipScore:21, action:"推荐翻拍", note:"7945粉小账号出6478赞；转发率74.7%全场最高——价格信息是社交货币"},
+    {id:6, plat:"douyin", acct:"问哥选酒", fans:"50.7万", url:"https://www.douyin.com/video/7527745862018141483", date:"近期", likes:6191, comments:1710, collects:2125, shares:1732,
+     title:"紫迎宾、金王子、酱香经典，谁最值得买", tags:["选酒指南","酱酒","白酒","南京买酒"], form:"口播 + 实物对比，9分24秒",
+     hook:"三款酒摆一起直接问「谁最值得买」", emotion:"决策焦虑 + 占便宜", boom:"决策", pain:"同价位酱酒太多，怕买错买贵", ipScore:24, action:"重点翻拍", note:"决策型内容天花板；评论/点赞比0.276极高，用户全在问「我选哪个」"},
+    {id:7, plat:"douyin", acct:"问哥选酒", fans:"50.7万", url:"https://www.douyin.com/video/7514566222747356453", date:"近期", likes:6046, comments:751, collects:4219, shares:1719,
+     title:"想存酱香酒怎么选", tags:["选酒指南","酱香型白酒","白酒"], form:"口播 + 实物展示，5分20秒",
+     hook:"「想存酱香酒怎么选」直奔决策", emotion:"资产焦虑", boom:"存酒", pain:"想存酒但不知道哪些值得存、会不会贬值", ipScore:23, action:"重点翻拍", note:"收藏率69.8%——存酒类是收藏王，视频号新规下会疯推"},
+    {id:8, plat:"douyin", acct:"生活小常识", fans:"—", url:"https://www.douyin.com/video/7685642156920709870", date:"近期", likes:2831, comments:0, collects:0, shares:0,
+     title:"白酒冷知识（生活小常识合集）", tags:["生活小常识","白酒冷知识","白酒避坑","涨知识"], form:"图文快剪 5秒",
+     hook:"冷知识悬念", emotion:"好奇", boom:"避坑", pain:"不懂酒、想快速涨知识", ipScore:10, action:"观察", note:"5秒超短冷知识切片，蹭涨知识流量，可借鉴其极简表达"},
+    {id:9, plat:"douyin", acct:"酱酒詹小艳", fans:"—", url:"https://www.douyin.com/video/7684496440320550248", date:"5天前", likes:1949, comments:0, collects:0, shares:0,
+     title:"酒桌上这三个规矩一定得注意", tags:["织金","酒桌文化","生活常识","白酒知识"], form:"口播 + 酒桌场景",
+     hook:"「酒桌这三个规矩」数字清单", emotion:"认同 + 社交安全感", boom:"酒桌", pain:"酒桌不懂规矩怕失礼丢面子", ipScore:18, action:"推荐翻拍", note:"酒桌文化是白酒赛道长青流量；适合做「商务酒桌规矩」升级版"},
+    {id:10, plat:"douyin", acct:"茅台镇 任果果", fans:"39.6万", url:"https://www.douyin.com/video/7684581699431677110", date:"4天前", likes:1244, comments:112, collects:68, shares:18,
+     title:"贵阳酒展中心，你来了吗", tags:["贵阳酒展中心","贵阳酒博会","品酒","茅台镇任果果"], form:"户外口播 + 活动现场，1分23秒",
+     hook:"「贵阳酒展你来了吗」现场感", emotion:"围观 / 同城代入", boom:"现场", pain:"—", ipScore:12, action:"学习形式", note:"蹭酒博会线下热点，时效性强，学其「现场感」表达而非选题本身"},
+    {id:11, plat:"douyin", acct:"老黄-远离冤枉酒", fans:"3096", url:"https://www.douyin.com/video/7685291479161523508", date:"2天前", likes:1134, comments:7, collects:2247, shares:748,
+     title:"一分钟学会品酒黑话", tags:["白酒","酒知识","酒文化","酱香酒","品酒"], form:"口播 + 实物展示（茅台1935），53秒",
+     hook:"黄色大字「一分钟学会品酒黑话」", emotion:"好奇 + 实用", boom:"品酒", pain:"酒桌不懂品鉴术语怕露怯", ipScore:18, action:"重点翻拍", note:"收藏率198%——纯干货工具型，用户收藏备用、转给酒友"},
+    {id:12, plat:"douyin", acct:"国脉酒业", fans:"—", url:"https://www.douyin.com/video/7685690553891680427", date:"1天前", likes:118, comments:0, collects:0, shares:0,
+     title:"坤沙酒知识（纯粮食酒科普）", tags:["白酒","坤沙酒","酱酒","纯粮食酒","白酒知识"], form:"图文口播",
+     hook:"坤沙工艺悬念", emotion:"好奇", boom:"知识", pain:"看不懂坤沙碎沙术语", ipScore:14, action:"观察", note:"工艺科普方向正确但表达平淡，可做「一图看懂坤沙」升级"},
+    {id:13, plat:"douyin", acct:"飞哥文化艺术", fans:"—", url:"https://www.douyin.com/video/7686090235616368485", date:"20小时前", likes:674, comments:0, collects:0, shares:0,
+     title:"还记得那些江西酒品牌，现在还在吗", tags:["飞哥日尝","白酒","江西","品酒师","酒知识"], form:"口播 + 老品牌回顾",
+     hook:"「还记得那些酒品牌吗」怀旧提问", emotion:"怀旧 / 情怀", boom:"情怀", pain:"—", ipScore:11, action:"观察", note:"区域品牌情怀向，验证「老酒记忆」题材有共鸣，可迁移到贵州/广东本地"},
+    {id:14, plat:"douyin", acct:"白酒文化科普", fans:"—", url:"https://www.douyin.com/video/7685656438554823962", date:"近期", likes:571, comments:0, collects:0, shares:0,
+     title:"被嫌弃的苦高粱，凭什么成为中国白酒的天选原料", tags:["白酒","红高粱"], form:"口播 + 历史故事",
+     hook:"「苦高粱凭什么」反差提问", emotion:"好奇 / 涨知识", boom:"工艺", pain:"—", ipScore:13, action:"观察", note:"原料故事型科普，把冷知识讲成有情节的故事，长尾收藏向"},
+    {id:15, plat:"douyin", acct:"抬眸看吗", fans:"—", url:"https://www.douyin.com/video/7685698091177548916", date:"1天前", likes:480, comments:0, collects:0, shares:0,
+     title:"大量伤身毒白酒，注意！", tags:["白酒","伤身","最新消息","白酒知识"], form:"图文警示",
+     hook:"「毒白酒」恐惧警告", emotion:"恐惧 / 焦虑", boom:"避坑", pain:"怕买到劣质酒伤身", ipScore:8, action:"谨慎", note:"恐吓式标题引流强但证据要求高，翻拍需有实据，避免夸大引发投诉"},
+    {id:16, plat:"douyin", acct:"孙思远说酒", fans:"—", url:"https://www.douyin.com/video/7685768023517536881", date:"1天前", likes:433, comments:0, collects:0, shares:0,
+     title:"四步让你选到好酒来存", tags:["酒知识","白酒","酒文化","白酒段位"], form:"口播，1分54秒",
+     hook:"「四步选好酒来存」清单承诺", emotion:"实用 / 资产安全感", boom:"存酒", pain:"想存酒但不会选、怕踩坑", ipScore:20, action:"推荐翻拍", note:"存酒四步法结构清晰，可直接升级为「选酒-买酒-存酒」全流程实操"},
+    {id:17, plat:"douyin", acct:"不爱喝酒的丹丹", fans:"—", url:"https://www.douyin.com/video/7685673011776687402", date:"1天前", likes:242, comments:0, collects:0, shares:0,
+     title:"为什么白酒都是52度53度？背后有什么讲究", tags:["白酒","白酒知识","白酒文化","揭秘"], form:"口播，1分16秒",
+     hook:"「为什么都是52度53度」反常识", emotion:"好奇", boom:"知识", pain:"—", ipScore:15, action:"观察", note:"反常识知识题自带收藏属性，适合作为系列科普选题"},
+    {id:18, plat:"douyin", acct:"茅友会老赵", fans:"—", url:"https://www.douyin.com/video/7685692134196516968", date:"1天前", likes:226, comments:0, collects:0, shares:0,
+     title:"茅台酒可以存多少年？", tags:["酒知识","茅台","茅台保存","老酒","白酒"], form:"口播，48秒",
+     hook:"「茅台能存多少年」直问", emotion:"资产焦虑", boom:"存酒", pain:"存酒年限不确定、怕存废", ipScore:14, action:"观察", note:"存酒年限是高频疑问，可合并进存酒系列做「年限篇」"},
+    {id:19, plat:"douyin", acct:"陈宗利｜城北基酒【椿树台酱酒】", fans:"—", url:"https://www.douyin.com/video/7686069580780215013", date:"22小时前", likes:233, comments:0, collects:0, shares:0,
+     title:"我们结婚了", tags:["酱酒"], form:"生活记录",
+     hook:"喜事场景", emotion:"祝福 / 真实感", boom:"记录", pain:"—", ipScore:8, action:"观察", note:"做酒人的真实生活记录，验证「过程类内容最不缺素材」，与真实记录者人设呼应"},
+    {id:20, plat:"douyin", acct:"二师兄品酒", fans:"—", url:"https://www.douyin.com/video/7685557748960990650", date:"2天前", likes:222, comments:0, collects:0, shares:0,
+     title:"说说特曲60和品鉴酒一样吗（第43集）", tags:["白酒","泸州老窖特曲60版","冰饮60一口入夏"], form:"口播品鉴，5分06秒",
+     hook:"「特曲60和品鉴酒一样吗」悬念", emotion:"好奇 / 较真", boom:"品鉴", pain:"同价位酒到底差在哪", ipScore:13, action:"观察", note:"品鉴系列化第43集，验证「同一个问题反复拆」可持续产出"}
+  ],
+  deep: [
+    {id:6, dims:{
+      acct:"50.7万粉选酒测评大号，人设「帮你选酒的专业买手」，内容高度垂直，同价位酱酒横向对比为主。近期稳定出爆款，方法论可学。",
+      data:"互动率结构极优：评论/点赞比 0.276（用户在评论区讨论「我选哪个」）、收藏/点赞比 0.343、转发/点赞比 0.280。典型的决策型内容——用户看完收藏做参考、转给同样在选酒的朋友。",
+      topic:"同价位对比（紫迎宾/金王子/酱香经典均为茅系嫡系），精准击中「买哪个」的决策痛点。",
+      hook:"前3秒三款酒摆一起直接问「谁最值得买」；9分24秒超长视频但完播率高，说明干货密度足够；口播+实物对比，逐项拆口感、价格、适用场景。",
+      emotion:"决策焦虑 + 占便宜心理——怕买错、怕花冤枉钱。",
+      boom:"决策型爆点：直接给答案「买哪个」，不泛泛讲知识。",
+      pain:"同价位酱酒太多不知道怎么选，怕买贵买错；1710条评论全是真实求推荐需求。",
+      formula:"三款酒并列 + 逐项对比 + 明确结论 + 适用场景推荐。可复用骨架：同类横评 → 逐项打分 → 给结论 → 引导报预算。"},
+      score:24, stars:5, verdict:"强烈推荐翻拍", can:"可以翻拍，但必须换成你自己的产品/对标酒，对比要客观",
+      why:"①决策型内容是白酒赛道流量密码，用户不是看热闹是做决策；②评论1710条证明需求极强；③与「帮你避开酱酒坑」人设完美匹配。",
+      learn:"学到了「同价位对比」永恒选题公式；学到了评论区引导「告诉我你的预算」。",
+      supplement:"加「不同场景选不同酒」（自饮/送礼/商务宴请）；加「这三款分别适合送什么人」。",
+      script:{title:"300元以内三款酱酒横评，最后一款闭眼入", hook:"别再问300块买什么酱酒了，今天一次说清楚", body:"①选3款你熟悉的同价位酱酒逐项对比（口感/价格/适用场景/适合送谁）；②先给结论再展开，每5秒一个信息点；③画面切酒标特写、倒酒对比。", ending:"评论区告诉我你的预算，我帮你选", visuals:"三款酒摆一排逐个拿起展示，品鉴桌+酒柜暖光背景", duration:"3-5分钟精品版"},
+      rules:["不贬低任何品牌（合规红线）","对比客观，不只夸自己的产品","原视频9分钟太长，做3-5分钟精品版","评论区引导「报预算」承接转化"]},
+    {id:7, dims:{
+      acct:"同为问哥选酒，50.7万粉，决策型账号的第二条存酒爆款，证明该账号选题方法论可复制。",
+      data:"收藏/点赞比 0.698（极高）、转发/点赞比 0.284（高）。存酒类内容是收藏王——用户觉得「现在用不上，但买酒前要拿出来看」。",
+      topic:"存酒选题，踩中35-55岁男性的「资产保值」敏感神经。",
+      hook:"「想存酱香酒怎么选」直奔决策；口播+实物展示，5分20秒，结构为「值得存的三类→为什么→存多少年」。",
+      emotion:"资产焦虑——我买的酒能不能存？存了会不会升值？",
+      boom:"资产型爆点：存酒=投资心智，对「存什么能保值」特别敏感。",
+      pain:"想存酒但不知道哪些值得存、怎么存、存几年，怕存了不值钱。",
+      formula:"存酒三问结构：值得存什么 → 为什么 → 存多少年。可复用为「存酒四步法」系列。"},
+      score:23, stars:5, verdict:"强烈推荐翻拍", can:"可以翻拍；注意「存酒」类表达边界",
+      why:"①收藏率0.7是视频号新规第一权重指标最爱的内容形态；②35-55岁核心人群有闲钱想存酒；③可与工艺科普组合成系列。",
+      learn:"学到了存酒类选题的收藏红利；学到了「存酒三问」结构。",
+      supplement:"加「存酒的正确姿势」（怎么存、放哪里、立放躺放、温湿度）。",
+      script:{title:"不是所有酱酒都值得存，这3款越放越香", hook:"存酒存错了，就是一堆酒精", body:"①哪3款值得长期存放+为什么；②存多少年合适（年限篇）；③存酒正确姿势：环境、摆放、密封。", ending:"收藏起来，存酒前拿出来对照", visuals:"酒库/酒柜实景 + 存酒道具（温湿度计、密封膜）演示", duration:"3分钟"},
+      rules:["不能承诺升值回报（金融属性红线）","说「适合长期存放」可以，说「一定会涨」不行","引用价格/年限需有据可查"]},
+    {id:5, dims:{
+      acct:"粉丝仅7945的小账号，出6478赞——典型小账号爆款。人设「茅台镇老酒猎人」，主打捡漏/避坑，合集系列第10集。",
+      data:"转发/点赞比 0.747（全场最高）、收藏/点赞比 0.336。价格类内容转发率最高——用户觉得「这个价格信息值得告诉朋友」。",
+      topic:"名酒价格崩盘话题，踩中「现在入手正当时」的捡漏心理。",
+      hook:"「白酒价格大崩盘，第一名暴跌71%」数字冲击开场；口播+价格盘点，2分05秒。",
+      emotion:"占便宜心理+焦虑——跌了71%？现在入手正当时？",
+      boom:"价格爆点：暴跌/捡漏/现在入手，直接击中占便宜心理。",
+      pain:"怕买贵了，想知道什么时候买最划算。",
+      formula:"价格冲击钩子 + 榜单式盘点 + 「现在入手」行动暗示。"},
+      score:21, stars:4, verdict:"推荐翻拍（措辞需稳重化）", can:"可以翻拍；避免「崩盘/暴跌」夸张词",
+      why:"①价格信息是天然社交货币，转发率0.75证明；②小账号能爆说明选题权重高于粉丝量；③契合避坑专家人设。",
+      learn:"学到了价格类选题的强转发属性；学到了榜单式盘点结构。",
+      supplement:"加「你所在地区当前行情」的地域化信息，提升评论互动。",
+      script:{title:"今年酱酒价格回落后，300元档这几款性价比高", hook:"去年觉得贵的酒，今年入手正好", body:"①当前3款酒的价格区间+品质对比；②什么价位段现在最值得入手；③买之前核对的三件事（渠道/批次/行情）。", ending:"想知道你当地多少钱，评论区问我", visuals:"价格表 + 实酒展示，字幕标注行情来源", duration:"2分钟"},
+      rules:["不用「崩盘/暴跌/腰斩」等夸张词，用「价格回落/性价比高」","行情数据标注来源与时间","不制造恐慌性抢购暗示"]},
+    {id:11, dims:{
+      acct:"粉丝仅3096的小账号，人设「远离冤枉酒」（避坑方向），点赞1134远超账号平均水平，近期连续产出系列内容。",
+      data:"收藏/点赞比 1.98（极高）、转发/点赞比 0.66（很高）、评论极低0.006。典型干货工具型爆款——收藏备用、转发给酒友，但不评论。",
+      topic:"品酒入门话题，踩中「酒桌不懂行怕露怯」的社交焦虑。",
+      hook:"黄色大字「一分钟学会品酒黑话」；口播+实物展示（茅台1935瓶），53秒，三步教学：抿一口→闻香→品味。",
+      emotion:"好奇 + 实用价值——学会了酒桌上不露怯。",
+      boom:"身份焦虑爆点：怕在酒桌上不懂行被笑话。",
+      pain:"酒桌社交尴尬，不懂品鉴术语。",
+      formula:"钩子「一分钟学会XX」 + 三步教学 + 实物展示 + 引导收藏。"},
+      score:18, stars:4, verdict:"重点翻拍（做商务升级版）", can:"可以翻拍；不用茅台1935做主角（换成自己的酒/对标酒）",
+      why:"①收藏率1.98说明工具型内容长尾价值极高；②品酒入门匹配知识科普者人设；③53秒短平快适合快节奏起量。",
+      learn:"学到了「工具感」——让用户觉得存下来有用；学到了三步教学极简结构。",
+      supplement:"加「品完怎么夸才不尴尬」；加「新手最常犯的3个品酒错误」。",
+      script:{title:"酒桌上被问「这酒怎么样」，三句话让你显专业", hook:"别再说「好喝」了，品酒行家都这么说", body:"①看色（酒线、挂杯）一句话；②闻香（酱香/焦香/花果香）一句话；③品味（入口/回甘）一句话。", ending:"评论区扣1，发你一份品酒术语表", visuals:"真人出镜+实物倒酒特写，展示挂杯与酒花", duration:"约60秒"},
+      rules:["不出现饮酒动作（碰杯/干杯/仰头喝）","术语表内容需专业审核","评论区引导走合规话术（扣1发资料）"]},
+    {id:1, dims:{
+      acct:"4.5万粉茅台镇美女卖酒IP，总获赞75.3万，历史多爆款；人设「茅台镇卖酒的小姐姐」。",
+      data:"收藏/点赞比 0.59、转发/点赞比 0.39、评论/点赞比 0.084——同时高收藏+高转发+高评论的全能型爆款。",
+      topic:"「酒杯一拿，事业发达」吉利话金句，酒桌讨彩头心理。",
+      hook:"美女举杯+黄色字幕「事业发达」；内容仅一句吉利话，18秒超短。",
+      emotion:"吉利话+美好祝愿，转发给朋友=送祝福。",
+      boom:"吉利话爆点：经典祝福语自带社交货币属性。",
+      pain:"酒桌上想讨个好彩头，需要一句吉利话。",
+      formula:"颜值出镜 + 酒柜背景 + 一句吉利话 + 超短时长。"},
+      score:15, stars:3, verdict:"差异化翻拍", can:"可以翻拍，但不能照搬原句（同质化严重）",
+      why:"①同时高收藏高转发说明双重价值；②吉利话永不过时；③制作成本极低。",
+      learn:"学到了「吉利话+举杯」极简公式；学到了18秒超短也能出万赞。",
+      supplement:"加一句「为什么酒桌上要说吉利话」的小知识；或做「酒桌吉利话大全」系列。",
+      script:{title:"酒桌上最吉利的3句话，最后一句没人不喜欢", hook:"酒桌上会说话的人，永远不吃亏", body:"①「酒一端，路更宽」；②「杯一碰，事顺遂」；③「满上一杯，心意都在」+ 每句配一个小场景。", ending:"收藏起来，下次酒桌上用", visuals:"真人举杯，酒柜/酒桌背景，每句换一个场景", duration:"20秒"},
+      rules:["不直接念「事业发达」同款（规避同质化）","不拍饮酒动作，只展示举杯敬酒礼仪","可加知识增量区别于纯金句账号"]},
+    {id:2, dims:{
+      acct:"粉丝仅2244，这条视频点赞9569（粉丝的4倍），正在直播；人设「酱香白酒+酒桌文化」知识号，第24集系列持续更新。",
+      data:"转发/点赞比 0.42（极高）、收藏/点赞比 0.051（低）。典型社交货币型爆款——用户疯狂转发到酒友群，但不怎么收藏。",
+      topic:"酒桌文化+冷知识，横跨白酒与社交技巧两个赛道。",
+      hook:"黄色大字「四招看出对方酒量」；列举4个判断信号，29秒极短、节奏快、信息密度高。",
+      emotion:"掌控感+好奇心——学会了我就能看穿别人喝酒的底。",
+      boom:"社交货币爆点：转给酒友群=在群里刷存在感。",
+      pain:"酒桌社交中怕遇到深藏不露的人，想快速判断对方酒量。",
+      formula:"钩子（数字清单）+ 4个判断信号逐条演示 + 餐桌场景 + 引导转发。"},
+      score:13, stars:3, verdict:"参考思路，升级后再拍", can:"可以翻拍（识人术无独家版权）；不建议照搬娱乐化表达",
+      why:"①2244粉出9569赞证明选题碾压粉丝量；②转发4023说明酒友圈有强转发需求；③「酒桌文化」是白酒赛道永恒流量密码。",
+      learn:"学到了「酒桌文化+识人术」跨界选题公式；学到了短平快+数字清单结构；学到了餐桌场景代入感。",
+      supplement:"原视频只讲「怎么看别人」，你加「怎么不露自己的底」；做成「酒桌生存指南」系列。",
+      script:{title:"商务酒桌先别急着喝，观察这3个细节", hook:"酒桌上先别急着喝，观察这3个细节", body:"①主动倒酒的人（掌控场面的信号）；②语速突然放慢的人（在思考怎么说话）；③吃菜频率高的人（在躲酒）。", ending:"你身边有没有这种人？@他来对号入座", visuals:"商务餐桌场景，真人出镜，面前有菜有酒", duration:"约30秒"},
+      rules:["不照搬原视频4个点，换成3个新角度","不用原账号品牌名","场景升级为商务宴请（匹配35-55岁人群）"]},
+    {id:9, dims:{
+      acct:"酱酒詹小艳，酒桌文化向账号，近期「酒桌规矩」选题1949赞，为本周酒桌文化方向代表。",
+      data:"点赞1949（近7天酒桌类前列），评论/收藏/转发未获取到完整数据，但「规矩清单」类内容天然具备收藏与转发属性。",
+      topic:"酒桌规矩/礼仪话题，踩中「怕失礼」的社交安全焦虑。",
+      hook:"「酒桌上这三个规矩一定得注意」数字清单开场；口播+酒桌场景，短平快。",
+      emotion:"认同感+社交安全感——学会规矩心里有底。",
+      boom:"清单型爆点：三/五个规矩逐条列，信息密度高、易收藏。",
+      pain:"酒桌不懂规矩怕失礼、怕丢面子、怕得罪人。",
+      formula:"数字清单钩子 + 逐条规矩演示 + 「你中了几个」互动结尾。"},
+      score:18, stars:4, verdict:"推荐翻拍（做商务升级版）", can:"可以翻拍；规矩类属公共知识，无版权风险",
+      why:"①「酒桌规矩」比「识人术」更正面、更匹配避坑专家人设；②清单型结构极易复制；③35-55岁商务人群刚需。",
+      learn:"学到了数字清单结构的留人力；学到了「规矩/礼仪」正面选题角度。",
+      supplement:"升级为「商务宴请三要三不要」；加入主人/客人双视角；加「敬酒词怎么说才得体」。",
+      script:{title:"商务酒局这三件事千万别做，做了就减分", hook:"商务酒局，比喝什么更重要的是这3个规矩", body:"①主人先敬、双手举杯（尊卑秩序）；②不打断、不抢话（聆听比说话重要）；③量力而行、以茶代酒要提前说（坦诚不逞强）。", ending:"你踩过哪条？评论区聊聊", visuals:"商务宴请场景，主位/客位坐次演示", duration:"约45秒"},
+      rules:["不出现饮酒动作","不强调「酒量/灌酒」等负面导向","规矩表达需体现尊重与得体"]},
+    {id:16, dims:{
+      acct:"孙思远说酒，白酒知识向账号，近期「四步选好酒来存」433赞，结构清晰的存酒实操选题。",
+      data:"点赞433（存酒类近7天代表），互动结构以收藏为主——实操清单类内容的长尾收藏价值高。",
+      topic:"存酒实操话题，与问哥选酒存酒篇同频，验证「存酒」是本周确定性红利赛道。",
+      hook:"「四步让你选到好酒来存」清单承诺；口播1分54秒，先给结论再展开。",
+      emotion:"实用/资产安全感——学会四步，心里有底。",
+      boom:"实操型爆点：把抽象「存酒」拆成可执行的四步。",
+      pain:"想存酒但不会选、怕踩坑、怕存废。",
+      formula:"四步清单 + 每步一句话结论 + 「存酒先收藏」结尾。"},
+      score:20, stars:4, verdict:"推荐翻拍（并入存酒系列）", can:"可以翻拍；方法论通用",
+      why:"①存酒是本周被反复验证的红利赛道（问哥存酒收藏率0.7）；②四步法结构可直接复用；③与知识科普者人设契合。",
+      learn:"学到了把大问题拆成四步的「步骤化表达」；学到了结论先行。",
+      supplement:"四步升级为「选-买-存-查」全流程；加避坑点：哪些酒不建议存。",
+      script:{title:"想存酱酒？记住这4步，少走3年弯路", hook:"存酒存错，等于白花钱，记住这4步", body:"①选：只选大曲坤沙+执行标准GB/T26760；②买：认渠道、留票据；③存：避光密封、直立存放、温湿度恒定；④查：每年开箱检查一次酒体状态。", ending:"收藏这份存酒四步法，买酒前拿出来对照", visuals:"实景演示存放环境（酒柜/密封膜/温湿度计）", duration:"2分钟"},
+      rules:["不承诺升值回报","执行标准等专业信息需核实","「存几年」给区间不给保证"]}
+  ]
+};
+
+</script>
+<script>
+
+const TOPICS = {
+  douyin:[["白酒",6],["酒知识",5],["酱香型白酒",4],["白酒知识",4],["酒桌文化",3],["品酒",3],["酱酒",3],["白酒避坑",3],["选酒指南",3],["坤沙酒",2],["老酒",2],["口粮酒推荐",2],["茅台镇",2],["白酒测评",2],["冷知识",2]],
+  shipinhao:[["待补充",0]]
+};
+const INSIGHTS = [
+  {b:"决策型内容 = 流量密码", t:"问哥选酒两条决策视频（对比/存酒）收藏率 0.34–0.70，评论区全是「求推荐」。视频号新规收藏率权重第一，这类内容会被疯推。"},
+  {b:"小账号也能爆，选题 > 粉丝量", t:"杨酒师 2244 粉出 9569 赞、老酒猎人 7945 粉出 6478 赞——酱酒赛道选题权重远高于粉丝量，不看出身看选题。"},
+  {b:"转发率 = 社交货币探测器", t:"老酒猎人转发率 74.7%、杨酒师 42%——价格信息和酒桌谈资是酒友群最爱转的内容，视频号 55% 社交推荐下价值翻倍。"},
+  {b:"同账号选题决定一切", t:"老黄「品酒黑话」1134 赞 vs「假酒六款」40 赞，差 30 倍——不要靠日更碰运气，要靠选题精准打击。"},
+  {b:"存酒是本周确定性红利", t:"问哥存酒（收藏率0.7）+ 孙思远四步存酒 + 茅友会存酒年限，三条同频出现——值得做成系列。"}
+];
+const SELECTIONS = [
+  {no:"S01", title:"300元以内三款酱酒横评，最后一款闭眼入", pain:"同价位选择困难，怕买错买贵", structure:"钩子：别再问300块买什么 → 主体：三款逐项对比（口感/价格/适合送谁）→ 结尾：报预算帮你选", tags:["#酱酒","#白酒测评","#选酒指南"], boom:"决策型爆点", src:"问哥选酒 · 紫迎宾/金王子/酱香经典对比"},
+  {no:"S02", title:"不是所有酱酒都值得存，这3款越放越香", pain:"存酒焦虑，怕存废、怕贬值", structure:"钩子：存错=一堆酒精 → 主体：3款值得存+为什么+存几年 → 结尾：收藏起来买酒前对照", tags:["#存酒","#酱酒","#白酒知识"], boom:"存酒型（高收藏）", src:"问哥选酒 · 想存酱香酒怎么选（收藏率0.7）"},
+  {no:"S03", title:"商务酒局这三件事千万别做，做了就减分", pain:"酒桌不懂规矩怕失礼丢面子", structure:"钩子：比喝什么更重要的是规矩 → 主体：三要三不要（尊卑/聆听/量力）→ 结尾：你踩过哪条", tags:["#酒桌文化","#商务宴请","#白酒知识"], boom:"清单型（高转发）", src:"酱酒詹小艳 · 酒桌上这三个规矩"},
+  {no:"S04", title:"酒桌上被问「这酒怎么样」，三句话让你显专业", pain:"品鉴露怯，怕被当外行", structure:"钩子：别再说「好喝」了 → 主体：看色/闻香/品味各一句话 → 结尾：扣1发品酒术语表", tags:["#品酒","#白酒","#酒知识"], boom:"工具型（收藏率之王）", src:"老黄 · 一分钟学会品酒黑话（收藏率1.98）"},
+  {no:"S05", title:"今年酱酒价格回落后，300元档这几款性价比高", pain:"怕买贵，想知道何时入手", structure:"钩子：去年觉得贵的今年入手正好 → 主体：3款行情+品质对比 → 结尾：想知道当地价评论区问", tags:["#酱酒","#白酒行情","#性价比"], boom:"价格型（转发率之王）", src:"茅台镇老酒猎人 · 价格崩盘（转发率0.75）"},
+  {no:"S06", title:"为什么白酒都是52度53度？背后有什么讲究", pain:"反常识好奇，想涨知识", structure:"钩子：为什么都是53度 → 主体：工艺/酒精缔合/口感平衡 → 结尾：收藏长知识", tags:["#白酒知识","#白酒文化","#揭秘"], boom:"知识型（高收藏）", src:"不爱喝酒的丹丹 · 52度53度之谜"},
+  {no:"S07", title:"茅台镇7个核心产区，到底差在哪", pain:"不懂产区，分不清好坏", structure:"钩子：都是茅台镇酒，差在哪 → 主体：7产区逐个讲（风格/代表酒）→ 结尾：评论区问你的酒", tags:["#茅台镇","#酱酒","#坤沙酒"], boom:"知识型（长尾收藏）", src:"坤沙酒/产区知识矩阵本周高频出现"},
+  {no:"S08", title:"中秋送礼选酒：3款拿得出手不显low", pain:"送礼没底，怕丢面子", structure:"钩子：中秋送礼别踩坑 → 主体：3款价位/场景/寓意 → 结尾：报预算帮你挑", tags:["#送礼","#中秋","#白酒推荐"], boom:"场景型（节气红利）", src:"黔致简礼中秋话题 + 同价位对比结构"},
+  {no:"S09", title:"买酱酒别只看价格，先看这3个细节", pain:"怕买假、怕被坑", structure:"钩子：便宜不一定差，贵不一定对 → 主体：执行标准/配料表/渠道 → 结尾：关注不花冤枉钱", tags:["#白酒避坑","#酱酒","#买酒指南"], boom:"避坑型（高转发）", src:"抬眸看吗警示类 + 老黄避坑系列"},
+  {no:"S10", title:"酒桌上最吉利的3句话，最后一句没人不喜欢", pain:"想讨彩头但不会说", structure:"钩子：会说话的人永远不吃亏 → 主体：3句金句+场景 → 结尾：收藏备用", tags:["#酒桌文化","#吉利话","#白酒"], boom:"金句型（社交货币）", src:"酱香优品-珠珠 · 酒杯一拿（高转发高收藏）"},
+  {no:"S11", title:"我们去茅台镇选酒的真实过程", pain:"信任缺失，怕被割韭菜", structure:"钩子：这周去了趟茅台镇 → 主体：选酒/看厂/品酒真实记录 → 结尾：关注看下集", tags:["#茅台镇","#真实记录","#酱酒"], boom:"记录型（真实感信任）", src:"任果果酒展现场 + 茅台镇大雄寻酒"},
+  {no:"S12", title:"固态、液态、固液法白酒，一字之差天差地别", pain:"不懂工艺，怕喝到酒精酒", structure:"钩子：你喝的可能是酒精酒 → 主体：三种工艺对比+执行标准 → 结尾：收藏避坑", tags:["#白酒知识","#固态法","#避坑"], boom:"避坑型（信息差）", src:"固态/液态/固液法科普视频"},
+  {no:"S13", title:"做酱酒七年，我对酱酒的理解", pain:"想要观点认同，找同路人", structure:"钩子：做酒七年说点真话 → 主体：3个行业观察 → 结尾：认同的点个赞", tags:["#酱酒","#行业观点","#老板说"], boom:"观点型（立人设）", src:"酱酒崔总/友见欢 老板记录内容"},
+  {no:"S14", title:"存酒的正确姿势：怎么存、放哪里、立着还是躺着", pain:"存酒实操不会，怕存废", structure:"钩子：存酒存错白花钱 → 主体：环境/摆放/密封三要点 → 结尾：收藏对照", tags:["#存酒","#老酒","#酱酒知识"], boom:"实操型（高收藏）", src:"茅友会老赵存酒年限 + 孙思远四步存酒"},
+  {no:"S15", title:"客户从质疑到复购的故事", pain:"对酒商不信任，想听真实案例", structure:"钩子：客户说你家酒太贵 → 主体：从质疑到复购的真实故事 → 结尾：评论区聊你的故事", tags:["#真实记录","#老板故事","#酱酒"], boom:"故事型（信任转化）", src:"友见欢 · 净利润7600元创业记录"}
+];
+const ADVISE = {
+  do:[
+    "优先拍「同价位对比横评」：直接套「三款酒并列 → 逐项对比 → 给结论 → 报预算」结构，本周收藏率被反复验证，视频号新规收藏率权重第一。",
+    "第二优先拍「存酒指南」：收藏率 0.7 的品类，做成「选-买-存-查」系列，吃满视频号长尾收藏流量。",
+    "第三优先拍「商务酒桌规矩」：酒桌文化本周两条入选，升级成商务版（坐次/敬酒/话术）精准匹配 35-55 岁核心人群。"
+  ],
+  dont:[
+    "不拍纯美女+吉利话（赛道已卷，需加知识增量才有差异）。",
+    "不拍「假酒最多的X款」——争议大、举证难，合规风险高。",
+    "不蹭时效已过热点（如酒博会现场），内容垂直度优先。",
+    "不出现极限词（最/第一/顶级）、饮酒动作、功效宣称、升值承诺——2026 红线零容忍。"
+  ],
+  insight:[
+    "评论区运营：置顶「想领避坑清单的扣1」，每一条评论必回，转化从评论区开始。",
+    "视频号发布后 1 小时内转发公司群+客户群+朋友圈，触发 55% 社交推荐裂变。",
+    "前 10 条内容必须垂直（全讲酱酒），账号基底分 35% 看原创信任，宁可慢不能乱。",
+    "数据差不要删视频：2026 是 7 天长效赛马，第 3-5 天跑量是常态。"
+  ]
+};
+const SOURCES = [
+  {platform:"抖音", acct:"酱香优品-珠珠", title:"酒杯一拿，事业发达", url:"https://www.douyin.com/video/7625949801795911140", data:"赞9697/评812/藏5738/转3819"},
+  {platform:"抖音", acct:"杨酒师酱香白酒", title:"酒桌识人术（第24集）", url:"https://www.douyin.com/video/7671601294821346560", data:"赞9569/评333/藏485/转4023"},
+  {platform:"抖音", acct:"暖风（生活号）", title:"赖氏父子酱酒话题内容", url:"https://www.douyin.com/video/7685679341585953178", data:"赞1.8万（仅点赞可见）"},
+  {platform:"抖音", acct:"问哥选酒", title:"破50万粉送50瓶白酒", url:"https://www.douyin.com/video/7684939136108629298", data:"赞1.7万（仅点赞可见）"},
+  {platform:"抖音", acct:"茅台镇老酒猎人", title:"白酒价格大崩盘（第10集）", url:"https://www.douyin.com/video/7559177975699164457", data:"赞6478/评372/藏2179/转4836"},
+  {platform:"抖音", acct:"问哥选酒", title:"紫迎宾、金王子、酱香经典谁最值得买", url:"https://www.douyin.com/video/7527745862018141483", data:"赞6191/评1710/藏2125/转1732"},
+  {platform:"抖音", acct:"问哥选酒", title:"想存酱香酒怎么选", url:"https://www.douyin.com/video/7514566222747356453", data:"赞6046/评751/藏4219/转1719"},
+  {platform:"抖音", acct:"生活小常识", title:"白酒冷知识合集", url:"https://www.douyin.com/video/7685642156920709870", data:"赞2831（仅点赞可见）"},
+  {platform:"抖音", acct:"酱酒詹小艳", title:"酒桌上这三个规矩一定得注意", url:"https://www.douyin.com/video/7684496440320550248", data:"赞1949（仅点赞可见）"},
+  {platform:"抖音", acct:"茅台镇 任果果", title:"贵阳酒展中心你来了吗", url:"https://www.douyin.com/video/7684581699431677110", data:"赞1244/评112/藏68/转18"},
+  {platform:"抖音", acct:"老黄-远离冤枉酒", title:"一分钟学会品酒黑话", url:"https://www.douyin.com/video/7685291479161523508", data:"赞1134/评7/藏2247/转748"},
+  {platform:"抖音", acct:"国脉酒业", title:"坤沙酒知识科普", url:"https://www.douyin.com/video/7685690553891680427", data:"赞118（仅点赞可见）"},
+  {platform:"抖音", acct:"飞哥文化艺术", title:"还记得那些江西酒品牌吗", url:"https://www.douyin.com/video/7686090235616368485", data:"赞674（仅点赞可见）"},
+  {platform:"抖音", acct:"白酒文化科普", title:"苦高粱凭什么成为天选原料", url:"https://www.douyin.com/video/7685656438554823962", data:"赞571（仅点赞可见）"},
+  {platform:"抖音", acct:"抬眸看吗", title:"大量伤身毒白酒注意", url:"https://www.douyin.com/video/7685698091177548916", data:"赞480（仅点赞可见）"},
+  {platform:"抖音", acct:"孙思远说酒", title:"四步让你选到好酒来存", url:"https://www.douyin.com/video/7685768023517536881", data:"赞433（仅点赞可见）"},
+  {platform:"抖音", acct:"不爱喝酒的丹丹", title:"为什么白酒都是52度53度", url:"https://www.douyin.com/video/7685673011776687402", data:"赞242（仅点赞可见）"},
+  {platform:"抖音", acct:"茅友会老赵", title:"茅台酒可以存多少年", url:"https://www.douyin.com/video/7685692134196516968", data:"赞226（仅点赞可见）"},
+  {platform:"抖音", acct:"陈宗利｜城北基酒", title:"我们结婚了", url:"https://www.douyin.com/video/7686069580780215013", data:"赞233（仅点赞可见）"},
+  {platform:"抖音", acct:"二师兄品酒", title:"特曲60和品鉴酒一样吗（第43集）", url:"https://www.douyin.com/video/7685557748960990650", data:"赞222（仅点赞可见）"},
+  {platform:"视频号", acct:"—", title:"今日待补充（平台限制）", url:"—", data:"—"}
+];
+const NOTEBOX = `
+<b>更新机制：</b>每日 11:00 定时任务自动抓取抖音 + 视频号酱香白酒赛道数据 → 更新本页全部数据 → 同步归档至项目文件夹「素材库（视频链接）/ 话题库（话题）/ 选题库（选题）」，均按平台分子目录存放。每周一上午输出本周 15 个内容文案与话题选题（周报）。<br>
+<b>视频号限制说明：</b>视频号无公开网页搜索入口。当前可用路径：①你在微信视频号看到好视频，复制链接发给我，立即做同标准八维拆解；②开通新视（xs.newrank.cn）/ 友望数据会员后，定时任务可自动抓取；③每周手动整理视频号热门截图发我分析。在本页数据接入前，视频号部分如实标注「待补充」，不编造数据。<br>
+<b>数据口径：</b>「近7天」指抓取时间前 7 日内发布；搜索列表可见的点赞数来自抖音搜索结果页，完整互动（评/藏/转）逐条点入视频页核验，核验不到的标注「仅点赞可见」。发布时间为搜索页相对时间。所有链接可直达原视频，可溯源。`
+
+</script>
+<script>
+/* ================= 数据（自动更新入口） ================= */
+</script>
+<script>
+/* ================= 渲染引擎 ================= */
+const $ = s=>document.querySelector(s);
+const esc = s=>String(s==null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+const fmt = n=>n>=10000?(n/10000).toFixed(1)+"万":n>=1000?(n/1000).toFixed(1)+"k":String(n);
+const fmtFull = n=>n>=10000?(n/10000).toFixed(1)+"万":String(n);
+
+function renderMeta(){
+  $("#navDate").textContent = D.meta.date+" · "+D.meta.weekday;
+  $("#heroDate").textContent = D.meta.date+" "+D.meta.weekday;
+  const total = D.videos.reduce((s,v)=>s+(+v.likes||0),0);
+  const accts = new Set(D.videos.map(v=>v.acct)).size;
+  const todaySub=$("#todaySub");
+  if(todaySub)todaySub.textContent=`近 7 天酱香白酒赛道抖音侧抓取 ${D.videos.filter(v=>v.plat==="douyin").length} 条优质视频、覆盖 ${accts} 个账号。视频号今日受平台限制待补充（详见数据溯源）。`;
+  $("#heroStats").innerHTML = `
+    <div class="hstat"><b><i>${D.videos.length}</i>条</b><span>今日入选视频</span></div>
+    <div class="hstat"><b><i>${accts}</i>个</b><span>覆盖账号</span></div>
+    <div class="hstat"><b>${fmt(total)}</b><span>累计点赞</span></div>
+    <div class="hstat"><b>${SELECTIONS.length}</b><span>选题弹药</span></div>`;
+  $("#kpiGrid").innerHTML = `
+    <div class="kpi"><b>${D.videos.filter(v=>v.plat==="douyin").length}<small>条</small></b><span>抖音入选 · 近7天</span></div>
+    <div class="kpi"><b>${D.videos.filter(v=>v.plat==="shipinhao").length}<small>条</small></b><span>视频号入选 · 待补充</span></div>
+    <div class="kpi"><b>${D.deep.length}<small>条</small></b><span>深度拆解 · 八维</span></div>
+    <div class="kpi"><b>${D.deep.length}<small>个</small></b><span>二创脚本 · 合规去重</span></div>`;
+}
+
+/* ---- 榜单 ---- */
+let fp="all", fb="all", fq="";
+function renderVideos(){
+  const q=fq.trim().toLowerCase();
+  let list=D.videos.filter(v=>{
+    if(fp!=="all"&&v.plat!==fp)return false;
+    if(fb!=="all"&&v.boom!==fb)return false;
+    if(q){const hay=(v.acct+v.title+v.tags.join(" ")+v.boom+v.pain).toLowerCase();if(!hay.includes(q))return false;}
+    return true;
+  }).sort((a,b)=>(b.likes||0)-(a.likes||0));
+  if(!list.length){$("#vGrid").innerHTML=`<div style="padding:60px 0;text-align:center;color:var(--ink2);font-size:14px">当前筛选下暂无视频 · 视频号数据今日待补充</div>`;return;}
+  $("#vGrid").innerHTML=list.map((v,i)=>{
+    const scorePill = v.ipScore>=20?"pill-score-hi":v.ipScore>=15?"pill-score-mid":"pill-score-lo";
+    return `<div class="vrow">
+      <div class="no">${String(i+1).padStart(2,"0")}</div>
+      <div class="vmain">
+        <div class="vtop">
+          <span class="pill ${v.plat==="douyin"?"pill-dy":"pill-sph"}">${v.plat==="douyin"?"抖音":"视频号"}</span>
+          <span style="font-size:13.5px;font-weight:600">${esc(v.acct)}</span>
+          ${v.fans?`<span style="font-size:12px;color:var(--ink2)">${esc(v.fans)}粉</span>`:""}
+          <span class="pill ${scorePill}">IP匹配 ${v.ipScore}分</span>
+          <span class="pill ${scorePill}">${esc(v.action)}</span>
+        </div>
+        <div class="vtitle"><a href="${esc(v.url)}" target="_blank" rel="noopener">${esc(v.title)} ↗</a></div>
+        <div class="vmeta">
+          <span>${esc(v.date)}</span>
+          <span>爆点 · <b style="color:var(--ink);font-weight:600">${esc(v.boom)}</b></span>
+          <span>痛点 · ${esc(v.pain).slice(0,24)}${v.pain.length>24?"…":""}</span>
+          ${v.note?`<span style="color:var(--ink2)">${esc(v.note)}</span>`:""}
+          <span>${v.tags.slice(0,4).map(t=>`<span class="tag">#${esc(t)}</span>`).join("")}</span>
+        </div>
+      </div>
+      <div class="vright">
+        <div class="vlike">${v.likes?fmtFull(v.likes):"—"}<small>点赞</small></div>
+        <div class="vact">${esc(v.action)}</div>
+      </div>
+    </div>`;
+  }).join("");
+}
+document.querySelectorAll(".fbtn[data-fp]").forEach(b=>b.addEventListener("click",()=>{
+  document.querySelectorAll(".fbtn[data-fp]").forEach(x=>x.classList.remove("on"));b.classList.add("on");fp=b.dataset.fp;renderVideos();
+}));
+document.querySelectorAll(".fbtn[data-fb]").forEach(b=>b.addEventListener("click",()=>{
+  document.querySelectorAll(".fbtn[data-fb]").forEach(x=>x.classList.remove("on"));b.classList.add("on");fb=b.dataset.fb;renderVideos();
+}));
+$("#vSearch").addEventListener("input",e=>{fq=e.target.value;renderVideos();});
+
+/* ---- 深度拆解 ---- */
+function renderDeep(){
+  $("#deepList").innerHTML=D.deep.map((d,i)=>{
+    const v=D.videos.find(x=>x.id===d.id);
+    const dims=[["账号画像",d.dims.acct],["数据表现",d.dims.data],["话题锚点",d.dims.topic],["看点钩子",d.dims.hook],["情绪点",d.dims.emotion],["爆点",d.dims.boom],["痛点",d.dims.pain],["组合公式",d.dims.formula]];
+    return `<article class="deep-item">
+      <div class="d-head">
+        <div>
+          <div class="d-no">DEEP ${String(i+1).padStart(2,"0")}</div>
+          <h3>${esc(v.title)}</h3>
+          <div class="d-src">${esc(v.acct)} · ${esc(v.fans||"—")}粉 · ${esc(v.date)} · <a href="${esc(v.url)}" target="_blank" rel="noopener">原视频 ↗</a></div>
+        </div>
+        <div style="text-align:right;display:flex;flex-direction:column;gap:6px;align-items:flex-end">
+          <span class="pill pill-score-hi">${esc(d.verdict)}</span>
+          <span style="font-size:12px;color:var(--ink2)">IP 匹配度 <b style="color:var(--ink);font-size:15px">${d.score}</b>/30</span>
+        </div>
+      </div>
+      <div class="d-data">
+        <div><b>${fmtFull(v.likes)}</b><span>点赞</span></div>
+        <div><b>${fmtFull(v.comments)}</b><span>评论</span></div>
+        <div><b>${fmtFull(v.collects)}</b><span>收藏</span></div>
+        <div><b>${fmtFull(v.shares)}</b><span>转发</span></div>
+        <div><b>${esc(v.boom)}</b><span>爆点类型</span></div>
+      </div>
+      <div class="dim-grid">
+        ${dims.map(([k,t])=>`<div class="dim-item"><h5>${k}</h5><p>${esc(t)}</p></div>`).join("")}
+      </div>
+      <div class="d-decision">
+        <div class="db"><h6>能不能翻拍</h6><p>${esc(d.can)}</p></div>
+        <div class="db"><h6>为什么值得二创</h6><p>${esc(d.why)}</p></div>
+        <div class="db"><h6>需要汲取什么</h6><p>${esc(d.learn)}</p></div>
+        <div class="db"><h6>需要补充输出什么</h6><p>${esc(d.supplement)}</p></div>
+      </div>
+    </article>`;
+  }).join("");
+}
+
+/* ---- 二创工坊 ---- */
+function renderErc(){
+  $("#ercList").innerHTML=D.deep.map((d,i)=>{
+    const v=D.videos.find(x=>x.id===d.id), s=d.script;
+    const t=`【标题】${s.title}\n【前3秒钩子】${s.hook}\n【正文结构】${s.body}\n【结尾引导】${s.ending}\n【画面建议】${s.visuals}\n【口播时长】${s.duration}`;
+    return `<article class="erc-item">
+      <div class="erc-head">
+        <div>
+          <h3>${esc(s.title)}</h3>
+          <div class="erc-src">二创自 ${esc(v.acct)} · ${esc(v.title)} · 核心爆点「${esc(v.boom)}」 · <a href="${esc(v.url)}" target="_blank" rel="noopener">原视频 ↗</a></div>
+        </div>
+        <button class="copy-btn" data-copy="${esc(t)}">复制脚本</button>
+      </div>
+      <div class="script-block" data-copy="${esc(t)}"><span class="t">标题</span>${esc(s.title)}
+<span class="t">钩子</span>${esc(s.hook)}
+<span class="t">正文</span>${esc(s.body)}
+<span class="t">结尾</span>${esc(s.ending)}
+<span class="t">画面</span>${esc(s.visuals)}
+<span class="t">时长</span>${esc(s.duration)}</div>
+      <ul class="rule-list">${d.rules.map(r=>`<li><b>要点</b>${esc(r)}</li>`).join("")}</ul>
+    </article>`;
+  }).join("");
+  document.querySelectorAll("[data-copy]").forEach(el=>el.addEventListener("click",()=>copyText(el.dataset.copy)));
+}
+async function copyText(t){
+  try{await navigator.clipboard.writeText(t);}catch(e){
+    const ta=document.createElement("textarea");ta.value=t;document.body.appendChild(ta);ta.select();document.execCommand("copy");ta.remove();
+  }
+  toast("脚本已复制");
+}
+function toast(m){const t=$("#toast");t.textContent=m;t.classList.add("show");clearTimeout(t._h);t._h=setTimeout(()=>t.classList.remove("show"),1800);}
+
+/* ---- 话题 / 选题 / 建议 / 溯源 ---- */
+function renderTopics(){
+  $("#topicDy").innerHTML=TOPICS.douyin.map(([t,n])=>`<span class="t-tag">${esc(t)}<span class="n">×${n}</span></span>`).join("");
+  $("#topicSph").innerHTML=`<span class="t-tag" style="opacity:.55;cursor:default">${esc(TOPICS.shipinhao[0][0])} — 需通过微信端提供视频号链接后自动入库</span>`;
+  $("#insightList").innerHTML=INSIGHTS.map(i=>`<div class="insight"><b>${esc(i.b)}</b>${esc(i.t)}</div>`).join("");
+}
+function renderSelections(){
+  $("#selGrid").innerHTML=SELECTIONS.map(s=>`
+    <article class="sel-card">
+      <span class="sel-no">${esc(s.no)}</span>
+      <div class="sel-title">${esc(s.title)}</div>
+      <div class="sel-row"><b>目标痛点</b> · ${esc(s.pain)}</div>
+      <div class="sel-row"><b>视频结构</b> · ${esc(s.structure)}</div>
+      <div class="sel-row"><b>预计爆点</b> · ${esc(s.boom)}</div>
+      <div class="sel-row"><b>参考来源</b> · ${esc(s.src)}</div>
+      <div class="sel-tags">${s.tags.map(t=>`<span class="tag strong">${esc(t)}</span>`).join("")}</div>
+    </article>`).join("");
+}
+function renderAdvise(){
+  const box=(t,arr,cls)=>`<div class="adv-box ${cls}"><h4>${t}</h4><ul>${arr.map(i=>`<li>${esc(i)}</li>`).join("")}</ul></div>`;
+  $("#advGrid").innerHTML=box("今日优先拍什么",ADVISE.do,"do")+box("今天别碰什么",ADVISE.dont,"dont")+box("操盘洞察与评论区",ADVISE.insight,"insight");
+}
+function renderSource(){
+  $("#srcTable").innerHTML=`<thead><tr><th>#</th><th>平台</th><th>账号</th><th>视频标题</th><th>访问地址（可溯源）</th><th>数据</th></tr></thead><tbody>`+
+    SOURCES.map((s,i)=>`<tr><td>${i+1}</td><td><span class="pill ${s.platform==="抖音"?"pill-dy":"pill-sph"}">${s.platform}</span></td><td>${esc(s.acct)}</td><td>${esc(s.title)}</td><td class="url">${s.url!=="—"?`<a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.url)}</a>`:"—"}</td><td>${esc(s.data)}</td></tr>`).join("")+`</tbody>`;
+  $("#noteBox").innerHTML=NOTEBOX;
+}
+
+/* ================= 图表（苹果风浅色） ================= */
+const ATheme={
+  textStyle:{color:"#6e6e73",fontFamily:"-apple-system,BlinkMacSystemFont,'PingFang SC',sans-serif"},
+  grid:{left:10,right:18,top:34,bottom:6,containLabel:true}
+};
+function initCharts(){
+  const boomCount={};D.videos.forEach(v=>{boomCount[v.boom]=(boomCount[v.boom]||0)+1;});
+  const bd=Object.entries(boomCount).sort((a,b)=>b[1]-a[1]);
+  const c1=echarts.init($("#chartBoom"));
+  c1.setOption(Object.assign({},ATheme,{
+    tooltip:{trigger:"axis",axisPointer:{type:"shadow"},backgroundColor:"#fff",borderColor:"#e8e8ed",textStyle:{color:"#1d1d1f"},extraCssText:"box-shadow:0 4px 20px rgba(0,0,0,.08)"},
+    xAxis:{type:"value",axisLine:{lineStyle:{color:"#d2d2d7"}},axisLabel:{color:"#86868b"},splitLine:{lineStyle:{color:"#f0f0f2"}}},
+    yAxis:{type:"category",data:bd.map(x=>x[0]),axisLine:{show:false},axisTick:{show:false},axisLabel:{color:"#1d1d1f",fontSize:13}},
+    series:[{type:"bar",data:bd.map(x=>x[1]),barWidth:16,itemStyle:{borderRadius:[4,4,4,4],color:"#1d1d1f"},label:{show:true,position:"right",color:"#86868b"}}]
+  }));
+  const deepFull=D.deep.map(d=>D.videos.find(v=>v.id===d.id)).filter(v=>v&&v.comments&&v.likes);
+  const names=deepFull.map(v=>v.acct.length>6?v.acct.slice(0,6):v.acct);
+  const coll=deepFull.map(v=>+((v.collects/v.likes)*100).toFixed(0));
+  const share=deepFull.map(v=>+((v.shares/v.likes)*100).toFixed(0));
+  const c2=echarts.init($("#chartMatrix"));
+  c2.setOption(Object.assign({},ATheme,{
+    tooltip:{backgroundColor:"#fff",borderColor:"#e8e8ed",textStyle:{color:"#1d1d1f"},extraCssText:"box-shadow:0 4px 20px rgba(0,0,0,.08)",formatter:p=>p.data.name+"<br>收藏率 "+p.value[0]+"% · 转发率 "+p.value[1]+"%"},
+    xAxis:{type:"value",name:"收藏率%",nameTextStyle:{color:"#86868b"},min:0,max:Math.max(...coll)*1.1,axisLabel:{color:"#86868b",formatter:"{value}%"},splitLine:{lineStyle:{color:"#f0f0f2"}}},
+    yAxis:{type:"value",name:"转发率%",nameTextStyle:{color:"#86868b"},min:0,max:Math.max(...share)*1.15,axisLabel:{color:"#86868b",formatter:"{value}%"},splitLine:{lineStyle:{color:"#f0f0f2"}}},
+    series:[{type:"scatter",data:deepFull.map((v,i)=>({value:[+coll[i],+share[i]],name:names[i]})),symbolSize:14,itemStyle:{color:"#b3261e",borderColor:"#fff",borderWidth:1.5},label:{show:true,formatter:p=>p.data.name,position:"top",color:"#6e6e73",fontSize:10.5}}],
+    graphic:[{type:"line",shape:{x1:0,y1:0,x2:0,y2:0},invisible:true}]
+  }));
+  const c3=echarts.init($("#chartEngage"));
+  c3.setOption(Object.assign({},ATheme,{
+    tooltip:{trigger:"axis",backgroundColor:"#fff",borderColor:"#e8e8ed",textStyle:{color:"#1d1d1f"},extraCssText:"box-shadow:0 4px 20px rgba(0,0,0,.08)",valueFormatter:v=>v+"%"},
+    legend:{data:["收藏率%","转发率%"],textStyle:{color:"#86868b"},top:0,right:0},
+    xAxis:{type:"category",data:names,axisLabel:{color:"#86868b",fontSize:10.5,interval:0,rotate:22},axisLine:{lineStyle:{color:"#d2d2d7"}}},
+    yAxis:{type:"value",axisLabel:{color:"#86868b",formatter:"{value}%"},splitLine:{lineStyle:{color:"#f0f0f2"}}},
+    series:[
+      {name:"收藏率%",type:"bar",data:coll,barWidth:10,itemStyle:{borderRadius:[4,4,0,0],color:"#1d1d1f"}},
+      {name:"转发率%",type:"bar",data:share,barWidth:10,itemStyle:{borderRadius:[4,4,0,0],color:"#b3261e"}}
+    ]
+  }));
+  const acctAgg={};D.videos.forEach(v=>{acctAgg[v.acct]=(acctAgg[v.acct]||0)+(+v.likes||0);});
+  const ad=Object.entries(acctAgg).sort((a,b)=>b[1]-a[1]).slice(0,8);
+  const c4=echarts.init($("#chartAcct"));
+  c4.setOption(Object.assign({},ATheme,{
+    tooltip:{trigger:"axis",axisPointer:{type:"shadow"},backgroundColor:"#fff",borderColor:"#e8e8ed",textStyle:{color:"#1d1d1f"},extraCssText:"box-shadow:0 4px 20px rgba(0,0,0,.08)",valueFormatter:v=>fmtFull(v)},
+    grid:{left:8,right:34,top:8,bottom:6,containLabel:true},
+    xAxis:{type:"value",axisLabel:{color:"#86868b",formatter:v=>fmtFull(v)},splitLine:{lineStyle:{color:"#f0f0f2"}},axisLine:{lineStyle:{color:"#d2d2d7"}}},
+    yAxis:{type:"category",data:ad.map(x=>x[0].length>9?x[0].slice(0,9)+"…":x[0]),axisLine:{show:false},axisTick:{show:false},axisLabel:{color:"#1d1d1f",fontSize:12}},
+    series:[{type:"bar",data:ad.map(x=>x[1]),barWidth:14,itemStyle:{borderRadius:[4,4,4,4],color:"#1d1d1f"},label:{show:true,position:"right",color:"#86868b",formatter:p=>fmtFull(p.value)}}]
+  }));
+  window._charts=[c1,c2,c3,c4];
+  window.addEventListener("resize",()=>window._charts.forEach(c=>c.resize()));
+}
+
+/* ================= 初始化 ================= */
+renderMeta();renderVideos();renderDeep();renderErc();renderTopics();renderSelections();renderAdvise();renderSource();initCharts();
+
+/* 滚动显现 */
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add("on");io.unobserve(e.target);}}),{threshold:.12});
+document.querySelectorAll(".rv:not(.on)").forEach(el=>io.observe(el));
+
+/* 导航与工具 */
+$("#navToggle").addEventListener("click",()=>$("#navLinks").classList.toggle("open"));
+document.querySelectorAll(".nav-links a").forEach(a=>a.addEventListener("click",()=>$("#navLinks").classList.remove("open")));
+const bt=$("#backTop");
+window.addEventListener("scroll",()=>bt.classList.toggle("show",window.scrollY>700));
+bt.addEventListener("click",()=>window.scrollTo({top:0,behavior:"smooth"}));
+const secs=[...document.querySelectorAll("section[id]")];
+window.addEventListener("scroll",()=>{
+  const y=window.scrollY+140;let cur="";
+  secs.forEach(s=>{if(s.offsetTop<=y)cur=s.id;});
+  document.querySelectorAll(".nav-links a").forEach(a=>a.classList.toggle("on",a.getAttribute("href")==="#"+cur));
+});
+</script>
+</body>
+</html>
