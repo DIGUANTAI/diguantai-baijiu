@@ -948,7 +948,9 @@ function renderDeep(){
 /* ---- 二创工坊 ---- */
 function renderErc(){
   $("#ercList").innerHTML=D.deep.map((d,i)=>{
-    const v=D.videos.find(x=>x.id===d.id), s=d.script;
+    const v=D.videos.find(x=>x.id===d.id);
+    if(!v) return '';
+    const s=d.script;
     const t=`【标题】${s.title}\n【前3秒钩子】${s.hook}\n【正文结构】${s.body}\n【结尾引导】${s.ending}\n【画面建议】${s.visuals}\n【口播时长】${s.duration}`;
     return `<article class="erc-item">
       <div class="erc-head">
