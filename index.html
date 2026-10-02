@@ -911,6 +911,7 @@ $("#vSearch").addEventListener("input",e=>{fq=e.target.value;renderVideos();});
 function renderDeep(){
   $("#deepList").innerHTML=D.deep.map((d,i)=>{
     const v=D.videos.find(x=>x.id===d.id);
+    if(!v) return '';
     const dims=[["账号画像",d.dims.acct],["数据表现",d.dims.data],["话题锚点",d.dims.topic],["看点钩子",d.dims.hook],["情绪点",d.dims.emotion],["爆点",d.dims.boom],["痛点",d.dims.pain],["组合公式",d.dims.formula]];
     return `<article class="deep-item">
       <div class="d-head">
